@@ -40,8 +40,8 @@ export const login = (email, password) => (dispatch) => {
 		}
 	);
 };
-export const logout = () => (dispatch) => {
-	AuthService.logout();
+export const logout = (token) => (dispatch) => {
+	AuthService.logout(token);
 	dispatch({
 		type: LOGOUT,
 	});

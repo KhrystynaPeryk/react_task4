@@ -14,15 +14,22 @@ const login = (email, password) => {
 		})
 		.then((response) => {
 			if (response.data.successful) {
-				// const userToken = response.data.result.split(' ')[1];
-				// console.log(`UserToken from auth.service.js - ${userToken}`);
 				localStorage.setItem('user', JSON.stringify(response.data));
 			}
 			return response.data;
 		});
 };
-const logout = () => {
-	localStorage.removeItem('user');
+const logout = (token) => {
+	return axios
+		.delete('http://localhost:4000/logout', {
+			headers: { Authorization: token },
+		})
+		.then(() => {
+			localStorage.removeItem('user');
+		})
+		.catch((error) => {
+			console.log(error);
+		});
 };
 const getAllCourses = () => {
 	return axios.get('http://localhost:4000/courses/all');

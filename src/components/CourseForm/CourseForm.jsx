@@ -15,7 +15,7 @@ import { formatDate } from '../../helpers/dateGenerator';
 import { getAuthorsArr } from '../../helpers/authorById';
 import { useEffect } from 'react';
 
-const CreateCourse = () => {
+const CreateForm = () => {
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
 	const [authors, setAuthors] = useState([]);
@@ -203,4 +203,4 @@ const CreateCourse = () => {
 	);
 };
 
-export default CreateCourse;
+export default CreateForm;

@@ -6,7 +6,7 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import Login from './components/Login/Login';
 import Error from './common/Error/Error';
 import NotFound from './common/NotFound/NotFound';
-import CreateCourse from './components/CreateCourse/CreateCourse';
+import CourseForm from './components/CourseForm/CourseForm';
 import CourseInfo from './components/CourseInfo/CourseInfo';
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
 			<Header />
 			<Routes>
 				<Route exact path='/' element={<Navigate replace to='/login' />} />
-				<Route exact path='/courses/add' element={<CreateCourse />} />
+				<Route exact path='/courses/add' element={<CourseForm />} />
 				<Route path='/courses/:courseId' element={<CourseInfo />} />
 				<Route path='/courses' element={<Courses />} />
 				<Route path='/registration' element={<Registration />} />
