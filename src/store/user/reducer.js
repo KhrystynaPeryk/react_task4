@@ -5,6 +5,7 @@ import {
 	LOGIN_SUCCESS,
 	LOGIN_FAIL,
 	LOGOUT,
+	GET_USER_ROLE,
 } from './actionTypes';
 const user = JSON.parse(localStorage.getItem('user'));
 const initialState = user
@@ -13,12 +14,14 @@ const initialState = user
 			name: user.user.name,
 			email: user.user.email,
 			token: user.result,
+			role: '',
 	  }
 	: {
 			isAuth: false,
 			name: '',
 			email: '',
 			token: '',
+			role: '',
 	  };
 export default function (state = initialState, action) {
 	const { type, payload } = action;
@@ -40,6 +43,11 @@ export default function (state = initialState, action) {
 				name: payload.user.user.name,
 				email: payload.user.user.email,
 				token: payload.user.result,
+			};
+		case GET_USER_ROLE:
+			return {
+				...state,
+				role: payload,
 			};
 		case LOGIN_FAIL:
 			return {

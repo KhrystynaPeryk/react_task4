@@ -47,6 +47,12 @@ const deleteCourse = (courseTobeDeleted) => {
 	return axios.delete(`http://localhost:4000/courses/${courseTobeDeleted.id}`);
 };
 
+const getUserRole = (token) => {
+	return axios.get('http://localhost:4000/users/me', {
+		headers: { Authorization: token },
+	});
+};
+
 export default {
 	register,
 	login,
@@ -55,4 +61,5 @@ export default {
 	addNewCourse,
 	deleteCourse,
 	getAllAuthors,
+	getUserRole,
 };

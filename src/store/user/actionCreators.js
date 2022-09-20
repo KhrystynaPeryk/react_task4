@@ -4,6 +4,7 @@ import {
 	LOGIN_SUCCESS,
 	LOGIN_FAIL,
 	LOGOUT,
+	GET_USER_ROLE,
 } from './actionTypes';
 import AuthService from '../../services';
 export const register = (name, email, password) => (dispatch) => {
@@ -23,22 +24,29 @@ export const register = (name, email, password) => (dispatch) => {
 	);
 };
 export const login = (email, password) => (dispatch) => {
-	return AuthService.login(email, password).then(
-		(data) => {
-			return dispatch({
-				type: LOGIN_SUCCESS,
-				// payload: { user: data.user },
-				payload: { user: data },
+	return AuthService.login(email, password)
+		.then(
+			(data) => {
+				return dispatch({
+					type: LOGIN_SUCCESS,
+					payload: { user: data },
+				});
+			},
+			() => {
+				return dispatch({
+					type: LOGIN_FAIL,
+				});
+			}
+		)
+		.then((data) => {
+			const token = data.payload.user.result;
+			return AuthService.getUserRole(token).then((data) => {
+				return dispatch({
+					type: GET_USER_ROLE,
+					payload: data.data.result.role,
+				});
 			});
-			// return Promise.resolve();
-		},
-		(error) => {
-			return dispatch({
-				type: LOGIN_FAIL,
-			});
-			// return Promise.reject();
-		}
-	);
+		});
 };
 export const logout = (token) => (dispatch) => {
 	AuthService.logout(token);
