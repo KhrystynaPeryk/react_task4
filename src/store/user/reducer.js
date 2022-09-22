@@ -7,26 +7,16 @@ import {
 	LOGOUT,
 	GET_USER_ROLE,
 } from './actionTypes';
-import Service from '../../services';
-const user = JSON.parse(localStorage.getItem('user'));
-const initialState = user
-	? {
-			isAuth: user.successful,
-			name: user.user.name,
-			email: user.user.email,
-			token: user.result,
-			role: '',
-	  }
-	: {
-			isAuth: false,
-			name: '',
-			email: '',
-			token: '',
-			role: '',
-	  };
+// const user = JSON.parse(localStorage.getItem('user'));
+const initialState = {
+	isAuth: false,
+	name: '',
+	email: '',
+	token: '',
+	role: '',
+};
 
 export default function (state = initialState, action) {
-	// role should not be empty at page reload
 	const { type, payload } = action;
 	switch (type) {
 		case REGISTER_SUCCESS:
