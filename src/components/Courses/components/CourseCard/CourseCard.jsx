@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { deleteCourse } from '../../../../store/courses/actionCreators';
 
 import { ReactComponent as TrashLogo } from '../../../../assets/trash.svg';
@@ -25,6 +25,7 @@ const CourseCard = ({
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const { role } = useSelector((state) => state.user);
 
 	const handleShowCourse = () => {
 		navigate(`/courses/${id}`, {
@@ -41,6 +42,10 @@ const CourseCard = ({
 
 	const handleCourseDelete = (id) => {
 		dispatch(deleteCourse(id));
+	};
+
+	const handleCourseUpdate = (id) => {
+		navigate(`/courses/update/${id}`);
 	};
 
 	return (
@@ -67,20 +72,24 @@ const CourseCard = ({
 						style={{ marginRight: '5px' }}
 						buttonText={buttonText.courseCard}
 						type='button'
-						onClick={handleShowCourse}
+						onClick={() => handleShowCourse()}
 					/>
-					<Button
-						style={{ marginRight: '5px' }}
-						buttonText={<PencilLogo></PencilLogo>}
-						type='button'
-					/>
-
-					<Button
-						style={{ marginRight: '5px' }}
-						buttonText={<TrashLogo></TrashLogo>}
-						type='button'
-						onClick={() => handleCourseDelete(id)}
-					/>
+					{role === 'admin' ? (
+						<>
+							<Button
+								style={{ marginRight: '5px' }}
+								buttonText={<PencilLogo></PencilLogo>}
+								type='button'
+								onClick={() => handleCourseUpdate(id)}
+							/>
+							<Button
+								style={{ marginRight: '5px' }}
+								buttonText={<TrashLogo></TrashLogo>}
+								type='button'
+								onClick={() => handleCourseDelete(id)}
+							/>
+						</>
+					) : null}
 				</div>
 			</div>
 		</section>

@@ -8,6 +8,7 @@ import Error from './common/Error/Error';
 import NotFound from './common/NotFound/NotFound';
 import CourseForm from './components/CourseForm/CourseForm';
 import CourseInfo from './components/CourseInfo/CourseInfo';
+import PrivateRoute from './components/PrivateRouter/PrivateRouter';
 
 function App() {
 	return (
@@ -15,7 +16,23 @@ function App() {
 			<Header />
 			<Routes>
 				<Route exact path='/' element={<Navigate replace to='/login' />} />
-				<Route exact path='/courses/add' element={<CourseForm />} />
+				<Route
+					exact
+					path='/courses/add'
+					element={
+						<PrivateRoute>
+							<CourseForm />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path='/courses/update/:courseId'
+					element={
+						<PrivateRoute>
+							<CourseForm />
+						</PrivateRoute>
+					}
+				/>
 				<Route path='/courses/:courseId' element={<CourseInfo />} />
 				<Route path='/courses' element={<Courses />} />
 				<Route path='/registration' element={<Registration />} />

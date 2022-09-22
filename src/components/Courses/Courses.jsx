@@ -25,6 +25,8 @@ const Courses = () => {
 	const dispatch = useDispatch();
 	const location = useLocation();
 	const { isAuth } = useSelector((state) => state.user);
+	const { role } = useSelector((state) => state.user);
+
 	const stateCourses = useSelector((state) => state.courses.courses);
 	const stateAuthors = useSelector((state) => state.authors.authors);
 
@@ -79,11 +81,13 @@ const Courses = () => {
 					/>
 				</div>
 				<div className='col d-flex flex-row-reverse align-items-center'>
-					<Button
-						buttonText={buttonText.courses}
-						onClick={displayCreateCourse}
-						type='button'
-					/>
+					{role === 'admin' ? (
+						<Button
+							buttonText={buttonText.courses}
+							onClick={displayCreateCourse}
+							type='button'
+						/>
+					) : null}
 				</div>
 			</div>
 			<div>
