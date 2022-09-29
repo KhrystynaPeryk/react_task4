@@ -61,6 +61,7 @@ export const buttonText = {
 	searchBar: 'Search',
 	courses: 'Add new course',
 	createCourse: 'Create course',
+	updateCourse: 'Update course',
 	createAuthor: 'Create author',
 	addAuthor: 'Add author',
 	deleteAuthor: 'Delete author',

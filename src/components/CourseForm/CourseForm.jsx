@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { saveNewCourse } from '../../store/courses/actionCreators';
 import { saveNewAuthor } from '../../store/authors/actionCreators';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Input from '../../common/Input/Input';
 import Button from '../../common/Button/Button';
 
@@ -16,6 +16,28 @@ import { getAuthorsArr } from '../../helpers/authorById';
 import { useEffect } from 'react';
 
 const CreateForm = () => {
+	const id = useParams();
+	const courseToUpdate = id.courseId;
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
+	const stateAuthors = useSelector((state) => state.authors.authors);
+	const stateCourses = useSelector((state) => state.courses.courses);
+
+	const courseForUpdate = stateCourses.find(
+		(course) => course.id === courseToUpdate
+	);
+
+	const [updatedTitle, setUpdatedTitle] = useState(courseForUpdate?.title);
+	const [updatedDescription, setUpdatedDescription] = useState(
+		courseForUpdate?.description
+	);
+	const [updatedDuration, setUpdatedDuration] = useState(
+		courseForUpdate?.duration
+	);
+	const [updatedCourseAuthors, setUpdatedCourseAuthors] = useState(
+		courseForUpdate?.authors
+	);
+
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
 	const [authors, setAuthors] = useState([]);
@@ -23,16 +45,14 @@ const CreateForm = () => {
 	const [duration, setDuration] = useState(0);
 	const [courseAuthors, setcourseAuthors] = useState([]);
 
-	const navigate = useNavigate();
-	const dispatch = useDispatch();
-	const stateAuthors = useSelector((state) => state.authors.authors);
-
 	useEffect(() => {
 		setAuthors(stateAuthors);
 	}, []);
 
 	const findNameById = (id) => {
 		const author = authors.find((el) => el.id === id);
+		console.log(author);
+		console.log(authors);
 		return author.name;
 	};
 
@@ -87,6 +107,31 @@ const CreateForm = () => {
 			});
 		}
 	};
+
+	const handleTitleChange = (e) => {
+		if (courseToUpdate) {
+			return setUpdatedTitle(e.target.value);
+		} else {
+			return setTitle(e.target.value);
+		}
+	};
+
+	const handleDescriptionChange = (e) => {
+		if (courseToUpdate) {
+			return setUpdatedDescription(e.target.value);
+		} else {
+			return setDescription(e.target.value);
+		}
+	};
+
+	const handleDurationChange = (e) => {
+		if (courseToUpdate) {
+			return setUpdatedDuration(e.target.value);
+		} else {
+			return setDuration(e.target.value);
+		}
+	};
+	console.log(updatedCourseAuthors);
 	return (
 		<form
 			className='d-flex justify-content-between align-items-center flex-wrap'
@@ -96,15 +141,22 @@ const CreateForm = () => {
 				<Input
 					className='form-control'
 					placeholderText={placeholderText.title}
-					onChange={(e) => setTitle(e.target.value)}
+					// onChange={(e) => setTitle(e.target.value)}
+					onChange={(e) => handleTitleChange(e)}
 					labelText={labelText.title}
 					type='text'
 					id='title'
 					name='title'
+					value={courseToUpdate ? updatedTitle : undefined}
 				/>
 			</div>
 			<div className='mt-4 form-group'>
-				<Button buttonText={buttonText.createCourse} type='submit' />
+				<Button
+					buttonText={
+						courseToUpdate ? buttonText.updateCourse : buttonText.createCourse
+					}
+					type='submit'
+				/>
 			</div>
 			<div className='form-group my-3'>
 				<label htmlFor='description'>Description</label>
@@ -116,7 +168,9 @@ const CreateForm = () => {
 					cols='200'
 					minLength={2}
 					placeholder={placeholderText.textArea}
-					onChange={(e) => setDescription(e.target.value)}
+					// onChange={(e) => setDescription(e.target.value)}
+					onChange={(e) => handleDescriptionChange(e)}
+					value={courseToUpdate ? updatedDescription : undefined}
 				></textarea>
 			</div>
 			<div className='form-group container row mt-4'>
@@ -141,14 +195,22 @@ const CreateForm = () => {
 					<h6 className='text-center mb-4'>Duration</h6>
 					<Input
 						placeholderText={placeholderText.duration}
-						onChange={(e) => setDuration(e.target.value)}
+						// onChange={(e) => setDuration(e.target.value)}
+						onChange={(e) => handleDurationChange(e)}
 						labelText={labelText.duration}
 						type='number'
 						id='duration'
 						name='duration'
 						min={1}
+						value={courseToUpdate ? updatedDuration : undefined}
 					/>
-					<p className='my-4 h3'>Duration: {pipeDuration(duration)} hours</p>
+					<p className='my-4 h3'>
+						Duration:{' '}
+						{courseToUpdate
+							? pipeDuration(updatedDuration)
+							: pipeDuration(duration)}{' '}
+						hours
+					</p>
 				</div>
 				<div className='col'>
 					<h6 className='text-center mb-4'>Authors</h6>
@@ -170,6 +232,47 @@ const CreateForm = () => {
 								</div>
 							);
 						})}
+						{/* {courseToUpdate ? (
+							<div>
+								{authors.map((author) => {
+									return (
+										<div
+											key={author.id}
+											className='d-flex container my-2 mx-5 justify-content-between align-items-center'
+										>
+											<p className='mx-5'>{author.name}</p>
+											<div className='mx-5'>
+												<Button
+													buttonText={buttonText.addAuthor}
+													onClick={() => handleAddAuthor(author.id)}
+													type='button'
+												/>
+											</div>
+										</div>
+									);
+								})}
+							</div>
+						) : (
+							<div>
+								{authors.map((author) => {
+									return (
+										<div
+											key={author.id}
+											className='d-flex container my-2 mx-5 justify-content-between align-items-center'
+										>
+											<p className='mx-5'>{author.name}</p>
+											<div className='mx-5'>
+												<Button
+													buttonText={buttonText.addAuthor}
+													onClick={() => handleAddAuthor(author.id)}
+													type='button'
+												/>
+											</div>
+										</div>
+									);
+								})}
+							</div>
+						)} */}
 					</div>
 					<h6 className='text-center my-4'>Course authors</h6>
 					<div>
@@ -196,6 +299,66 @@ const CreateForm = () => {
 								})}
 							</div>
 						)}
+						{/* {courseToUpdate ? (
+							<div>
+								{updatedCourseAuthors.map((updatedCourseAuthor, index11) => {
+									const authorName = stateAuthors.find((el) => {
+										if (el.id === updatedCourseAuthor) {
+											return el.name;
+										}
+										return el;
+									});
+									// const authorName = findNameById(updatedCourseAuthor);
+									return (
+										<div
+											key={index11}
+											className='d-flex container my-2 mx-5 justify-content-between align-items-center'
+										>
+											<p className='mx-5'>{authorName.name}</p>
+											<div className='mx-5'>
+												<Button
+													buttonText={buttonText.deleteAuthor}
+													onClick={() =>
+														handleDeleteAuthor(updatedCourseAuthor)
+													}
+													type='button'
+												/>
+											</div>
+										</div>
+									);
+								})}
+							</div>
+						) : (
+							<div>
+								{courseAuthors.length === 0 ? (
+									<div className='container text-center'>
+										Author list is empty
+									</div>
+								) : (
+									<div>
+										{courseAuthors.map((courseAuthor) => {
+											return (
+												<div
+													key={courseAuthor.id}
+													className='d-flex container my-2 mx-5 justify-content-between align-items-center'
+												>
+													<p className='mx-5'>{courseAuthor.name}</p>
+													<div className='mx-5'>
+														<Button
+															buttonText={buttonText.deleteAuthor}
+															onClick={() =>
+																handleDeleteAuthor(courseAuthor.id)
+															}
+															type='button'
+														/>
+													</div>
+												</div>
+											);
+										})}
+									</div>
+								)}
+							</div>
+						)} */}
 					</div>
 				</div>
 			</div>
