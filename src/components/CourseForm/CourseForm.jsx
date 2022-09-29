@@ -13,6 +13,11 @@ import { labelText, placeholderText, buttonText } from '../../constants';
 import { pipeDuration } from '../../helpers/pipeDuration';
 import { formatDate } from '../../helpers/dateGenerator';
 import { getAuthorsArr } from '../../helpers/authorById';
+import {
+	getAuthorNameById,
+	getAllAuthorsForCourseToUpdate,
+} from '../../helpers/getAuthorsToUpdateCourse';
+
 import { useEffect } from 'react';
 
 const CreateForm = () => {
@@ -43,16 +48,28 @@ const CreateForm = () => {
 	const [authors, setAuthors] = useState([]);
 	const [addAuthor, setAddAuthor] = useState('');
 	const [duration, setDuration] = useState(0);
-	const [courseAuthors, setcourseAuthors] = useState([]);
+	const [courseAuthors, setCourseAuthors] = useState([]);
 
 	useEffect(() => {
-		setAuthors(stateAuthors);
+		if (courseToUpdate) {
+			const courseObjectToUpdate = stateCourses.find(
+				(course) => course.id === courseToUpdate
+			);
+			const allAuthors = getAllAuthorsForCourseToUpdate(
+				stateAuthors,
+				courseObjectToUpdate.authors
+			);
+			setAuthors(getAuthorNameById(allAuthors, stateAuthors));
+			setCourseAuthors(
+				getAuthorNameById(courseObjectToUpdate.authors, stateAuthors)
+			);
+		} else {
+			setAuthors(stateAuthors);
+		}
 	}, []);
 
 	const findNameById = (id) => {
 		const author = authors.find((el) => el.id === id);
-		console.log(author);
-		console.log(authors);
 		return author.name;
 	};
 
@@ -67,7 +84,7 @@ const CreateForm = () => {
 	};
 
 	const handleAddAuthor = (id) => {
-		setcourseAuthors((courseAuthors) => [
+		setCourseAuthors((courseAuthors) => [
 			...courseAuthors,
 			{ id, name: findNameById(id) },
 		]);
@@ -80,7 +97,7 @@ const CreateForm = () => {
 		let filtercourseAuthors = courseAuthors.filter(
 			(authorId) => authorId.id !== id
 		);
-		setcourseAuthors(filtercourseAuthors);
+		setCourseAuthors(filtercourseAuthors);
 		setAuthors([...authors, { id, name: author.name }]);
 	};
 
@@ -131,7 +148,6 @@ const CreateForm = () => {
 			return setDuration(e.target.value);
 		}
 	};
-	console.log(updatedCourseAuthors);
 	return (
 		<form
 			className='d-flex justify-content-between align-items-center flex-wrap'
@@ -232,47 +248,6 @@ const CreateForm = () => {
 								</div>
 							);
 						})}
-						{/* {courseToUpdate ? (
-							<div>
-								{authors.map((author) => {
-									return (
-										<div
-											key={author.id}
-											className='d-flex container my-2 mx-5 justify-content-between align-items-center'
-										>
-											<p className='mx-5'>{author.name}</p>
-											<div className='mx-5'>
-												<Button
-													buttonText={buttonText.addAuthor}
-													onClick={() => handleAddAuthor(author.id)}
-													type='button'
-												/>
-											</div>
-										</div>
-									);
-								})}
-							</div>
-						) : (
-							<div>
-								{authors.map((author) => {
-									return (
-										<div
-											key={author.id}
-											className='d-flex container my-2 mx-5 justify-content-between align-items-center'
-										>
-											<p className='mx-5'>{author.name}</p>
-											<div className='mx-5'>
-												<Button
-													buttonText={buttonText.addAuthor}
-													onClick={() => handleAddAuthor(author.id)}
-													type='button'
-												/>
-											</div>
-										</div>
-									);
-								})}
-							</div>
-						)} */}
 					</div>
 					<h6 className='text-center my-4'>Course authors</h6>
 					<div>
@@ -299,66 +274,6 @@ const CreateForm = () => {
 								})}
 							</div>
 						)}
-						{/* {courseToUpdate ? (
-							<div>
-								{updatedCourseAuthors.map((updatedCourseAuthor, index11) => {
-									const authorName = stateAuthors.find((el) => {
-										if (el.id === updatedCourseAuthor) {
-											return el.name;
-										}
-										return el;
-									});
-									// const authorName = findNameById(updatedCourseAuthor);
-									return (
-										<div
-											key={index11}
-											className='d-flex container my-2 mx-5 justify-content-between align-items-center'
-										>
-											<p className='mx-5'>{authorName.name}</p>
-											<div className='mx-5'>
-												<Button
-													buttonText={buttonText.deleteAuthor}
-													onClick={() =>
-														handleDeleteAuthor(updatedCourseAuthor)
-													}
-													type='button'
-												/>
-											</div>
-										</div>
-									);
-								})}
-							</div>
-						) : (
-							<div>
-								{courseAuthors.length === 0 ? (
-									<div className='container text-center'>
-										Author list is empty
-									</div>
-								) : (
-									<div>
-										{courseAuthors.map((courseAuthor) => {
-											return (
-												<div
-													key={courseAuthor.id}
-													className='d-flex container my-2 mx-5 justify-content-between align-items-center'
-												>
-													<p className='mx-5'>{courseAuthor.name}</p>
-													<div className='mx-5'>
-														<Button
-															buttonText={buttonText.deleteAuthor}
-															onClick={() =>
-																handleDeleteAuthor(courseAuthor.id)
-															}
-															type='button'
-														/>
-													</div>
-												</div>
-											);
-										})}
-									</div>
-								)}
-							</div>
-						)} */}
 					</div>
 				</div>
 			</div>
