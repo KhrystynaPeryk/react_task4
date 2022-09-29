@@ -23,25 +23,12 @@ import { useEffect } from 'react';
 const CreateForm = () => {
 	const id = useParams();
 	const courseToUpdate = id.courseId;
+
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+
 	const stateAuthors = useSelector((state) => state.authors.authors);
 	const stateCourses = useSelector((state) => state.courses.courses);
-
-	const courseForUpdate = stateCourses.find(
-		(course) => course.id === courseToUpdate
-	);
-
-	const [updatedTitle, setUpdatedTitle] = useState(courseForUpdate?.title);
-	const [updatedDescription, setUpdatedDescription] = useState(
-		courseForUpdate?.description
-	);
-	const [updatedDuration, setUpdatedDuration] = useState(
-		courseForUpdate?.duration
-	);
-	const [updatedCourseAuthors, setUpdatedCourseAuthors] = useState(
-		courseForUpdate?.authors
-	);
 
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
@@ -55,10 +42,13 @@ const CreateForm = () => {
 			const courseObjectToUpdate = stateCourses.find(
 				(course) => course.id === courseToUpdate
 			);
+			setTitle(courseObjectToUpdate.title);
+			setDescription(courseObjectToUpdate.description);
 			const allAuthors = getAllAuthorsForCourseToUpdate(
 				stateAuthors,
 				courseObjectToUpdate.authors
 			);
+			setDuration(courseObjectToUpdate.duration);
 			setAuthors(getAuthorNameById(allAuthors, stateAuthors));
 			setCourseAuthors(
 				getAuthorNameById(courseObjectToUpdate.authors, stateAuthors)
@@ -125,29 +115,6 @@ const CreateForm = () => {
 		}
 	};
 
-	const handleTitleChange = (e) => {
-		if (courseToUpdate) {
-			return setUpdatedTitle(e.target.value);
-		} else {
-			return setTitle(e.target.value);
-		}
-	};
-
-	const handleDescriptionChange = (e) => {
-		if (courseToUpdate) {
-			return setUpdatedDescription(e.target.value);
-		} else {
-			return setDescription(e.target.value);
-		}
-	};
-
-	const handleDurationChange = (e) => {
-		if (courseToUpdate) {
-			return setUpdatedDuration(e.target.value);
-		} else {
-			return setDuration(e.target.value);
-		}
-	};
 	return (
 		<form
 			className='d-flex justify-content-between align-items-center flex-wrap'
@@ -157,13 +124,12 @@ const CreateForm = () => {
 				<Input
 					className='form-control'
 					placeholderText={placeholderText.title}
-					// onChange={(e) => setTitle(e.target.value)}
-					onChange={(e) => handleTitleChange(e)}
+					onChange={(e) => setTitle(e.target.value)}
 					labelText={labelText.title}
 					type='text'
 					id='title'
 					name='title'
-					value={courseToUpdate ? updatedTitle : undefined}
+					value={title}
 				/>
 			</div>
 			<div className='mt-4 form-group'>
@@ -184,9 +150,8 @@ const CreateForm = () => {
 					cols='200'
 					minLength={2}
 					placeholder={placeholderText.textArea}
-					// onChange={(e) => setDescription(e.target.value)}
-					onChange={(e) => handleDescriptionChange(e)}
-					value={courseToUpdate ? updatedDescription : undefined}
+					onChange={(e) => setDescription(e.target.value)}
+					value={description}
 				></textarea>
 			</div>
 			<div className='form-group container row mt-4'>
@@ -211,22 +176,15 @@ const CreateForm = () => {
 					<h6 className='text-center mb-4'>Duration</h6>
 					<Input
 						placeholderText={placeholderText.duration}
-						// onChange={(e) => setDuration(e.target.value)}
-						onChange={(e) => handleDurationChange(e)}
+						onChange={(e) => setDuration(e.target.value)}
 						labelText={labelText.duration}
 						type='number'
 						id='duration'
 						name='duration'
 						min={1}
-						value={courseToUpdate ? updatedDuration : undefined}
+						value={duration}
 					/>
-					<p className='my-4 h3'>
-						Duration:{' '}
-						{courseToUpdate
-							? pipeDuration(updatedDuration)
-							: pipeDuration(duration)}{' '}
-						hours
-					</p>
+					<p className='my-4 h3'>Duration: {pipeDuration(duration)} hours</p>
 				</div>
 				<div className='col'>
 					<h6 className='text-center mb-4'>Authors</h6>
